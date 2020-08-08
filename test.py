@@ -131,17 +131,30 @@ class NimAI():
         else:
             return max(values)
 
+# def choose_action(self, state, epsilon=True):
+
 ai = NimAI()
 
 ai.q[(1, 1, 4, 4), (3, 2)] = 0.75
 ai.q[(1, 1, 4, 4), (3, 4)] = 0.5
-ai.q[(1, 1, 4, 4), (0, 1)] = 0
+ai.q[(1, 1, 4, 4), (0, 1)] = 0.1
 ai.q[(1, 1, 4, 6), (3, 2)] = 1
 
-state = [1, 1, 4, 5]
+state = [1, 1, 4, 4]
 #state = [1, 1, 4, 4]
 #state = [0, 0, 0, 0]
 
-print(ai.best_future_reward(state))
+actions = list(Nim.available_actions(state))
+values = []
+for action in actions:
+    values.append(ai.get_q_value(state, action))
+
+dictionary=dict(zip(actions,values))
+
+print(dictionary)
+
+print(max(dictionary, key=dictionary.get))
+# read up the following link to understand what the above is doing exactly:
+# https://www.kite.com/python/answers/how-to-find-the-max-value-in-a-dictionary-in-python
 
 
