@@ -1,48 +1,40 @@
-class Nim():
+import math
+import random
+import time
 
-    def __init__(self, initial=[1, 3, 5, 7]):
-        """
-        Initialize game board.
-        Each game board has
-            - `piles`: a list of how many elements remain in each pile
-            - `player`: 0 or 1 to indicate which player's turn
-            - `winner`: None, 0, or 1 to indicate who the winner is
-        """
-        self.piles = initial.copy()
-        self.player = 0
-        self.winner = None
+class NimAI():
 
-    @classmethod
-    def available_actions(cls, piles):
+    def __init__(self, alpha=0.5, epsilon=0.1):
         """
-        Nim.available_actions(piles) takes a `piles` list as input
-        and returns all of the available actions `(i, j)` in that state.
+        Initialize AI with an empty Q-learning dictionary,
+        an alpha (learning) rate, and an epsilon rate.
 
-        Action `(i, j)` represents the action of removing `j` items
-        from pile `i` (where piles are 0-indexed).
+        The Q-learning dictionary maps `(state, action)`
+        pairs to a Q-value (a number).
+         - `state` is a tuple of remaining piles, e.g. (1, 1, 4, 4)
+         - `action` is a tuple `(i, j)` for an action
         """
-        actions = set()
-        for i, pile in enumerate(piles):
-            for j in range(1, pile + 1):
-                actions.add((i, j))
-        return actions
+        self.q = dict()
+        self.alpha = alpha
+        self.epsilon = epsilon
 
-    @classmethod
-    def other_player(cls, player):
+    def get_q_value(self, state, action):
         """
-        Nim.other_player(player) returns the player that is not
-        `player`. Assumes `player` is either 0 or 1.
+        Return the Q-value for the state `state` and the action `action`.
+        If no Q-value exists yet in `self.q`, return 0.
         """
-        return 0 if player == 1 else 1
-    
-    def switch_player(self):
-        """
-        Switch the current player to the other player.
-        """
-        self.player = Nim.other_player(self.player)
+        key = (tuple(state), action)
+        q_value = self.q.get(key,0)
+        return q_value
+
+ai = NimAI()
+
+ai.q[(1, 1, 4, 4), (0, 2)] = 10100
+
+state = [1, 1, 4, 4]
+action = (0,2)
+
+print(ai.get_q_value(state, action))
+#print(ai.q[(1, 1, 4, 4), (0, 2)])
 
 
-game = Nim()
-print(game.player)
-game.switch_player()
-print(game.player)
