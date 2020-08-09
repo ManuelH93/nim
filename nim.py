@@ -169,7 +169,7 @@ class NimAI():
         # Choose random action
         rand_action = random.choice(actions)
         # If epsilon is True, choose between random action and best action.
-        # If epsilon is false, choose best action.
+        # If epsilon is False, choose best action.
         if epsilon == True:
             action = random.choices([rand_action, max_action], weights = [self.epsilon, 1-self.epsilon])
         else:
