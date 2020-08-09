@@ -131,30 +131,50 @@ class NimAI():
         else:
             return max(values)
 
-# def choose_action(self, state, epsilon=True):
+    def choose_action(self, state, epsilon=True):
+        """
+        Given a state `state`, return an action `(i, j)` to take.
+
+        If `epsilon` is `False`, then return the best action
+        available in the state (the one with the highest Q-value,
+        using 0 for pairs that have no Q-values).
+
+        If `epsilon` is `True`, then with probability
+        `self.epsilon` choose a random available action,
+        otherwise choose the best action available.
+
+        If multiple actions have the same Q-value, any of those
+        options is an acceptable return value.
+        """
+        # Choose best possible action
+        actions = list(Nim.available_actions(state))
+        values = []
+        for action in actions:
+            values.append(self.get_q_value(state, action))
+        dictionary=dict(zip(actions,values))
+        max_value = max(dictionary.values())
+        max_actions = [k for k, v in dictionary.items() if v == max_value]
+        max_action = random.choice(max_actions)
+        # Choose random action
+        rand_action = random.choice(actions)
+        # If epsilon is True, choose between random action and best action.
+        # If epsilon is false, choose best action.
+        if epsilon == True:
+            action = random.choices([rand_action, max_action], weights = [self.epsilon, 1-self.epsilon])
+        else:
+            action = [max_action]
+        return action[0]
 
 ai = NimAI()
 
 ai.q[(1, 1, 4, 4), (3, 2)] = 0.75
-ai.q[(1, 1, 4, 4), (3, 4)] = 0.5
+ai.q[(1, 1, 4, 4), (3, 4)] = 0.75
 ai.q[(1, 1, 4, 4), (0, 1)] = 0.1
 ai.q[(1, 1, 4, 6), (3, 2)] = 1
 
 state = [1, 1, 4, 4]
-#state = [1, 1, 4, 4]
+#state = [1, 1, 4, 3]
 #state = [0, 0, 0, 0]
 
-actions = list(Nim.available_actions(state))
-values = []
-for action in actions:
-    values.append(ai.get_q_value(state, action))
 
-dictionary=dict(zip(actions,values))
-
-print(dictionary)
-
-print(max(dictionary, key=dictionary.get))
-# read up the following link to understand what the above is doing exactly:
-# https://www.kite.com/python/answers/how-to-find-the-max-value-in-a-dictionary-in-python
-
-
+print(ai.choose_action(state, epsilon=False))
